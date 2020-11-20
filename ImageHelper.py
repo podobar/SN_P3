@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 class ImageHelper:
     @staticmethod
     def draw_image(data):
