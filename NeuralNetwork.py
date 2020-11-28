@@ -17,12 +17,14 @@ class HopfieldNetwork:
             self.w = np.add(self.w, np.subtract(np.outer(x,x), np.identity(len(x))))
         self.w = self.w * 1/self.n
 
-    # def train_oja(self, training_set, learning_rate: float):
-    #     self.patterns = training_set
-    #     for x in training_set:
-    #                 V = np.sum(w[i,j]*x[j]) #i-loop
-    #
-    #         self.w[i,j] += learning_rate * V * (x[i] - V*self.w[i,j])
+    def train_oja(self, training_set, learning_rate: float):
+        self.patterns = training_set
+        for x in training_set:
+            for i in range(self.n):
+                for j in range(self.n):
+                    V = np.sum(self.w[:,j])*x[j] #i-loop
+                    self.w[i, j] += learning_rate * V * (x[i] - V * self.w[i, j])
+
 
     def test_sync(self):
         return
