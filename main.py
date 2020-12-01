@@ -1,6 +1,7 @@
 from FileHelper import FileHelper as fh
 from ImageHelper import ImageHelper as ih
 from NeuralNetwork import HopfieldNetwork
+import numpy as np
 import tkinter as tk
 from tkinter import filedialog
 # root = tk.Tk()
@@ -63,7 +64,12 @@ if __name__ == '__main__':
     # __menu.add_cascade(label="Train", menu=__train_menu)
     # __train_menu.add_command(label='Choose training file and train', command=load_training_set_and_train)
     # root.mainloop()
+    z = np.outer([1,1,1],[1,1,1])
+    y= 0
+    for j in range(3):
+        y=np.sum(z[:,j]*2)
     network = HopfieldNetwork(n=9, seed=1010, threshold=0.1)
+
     network.update_async([1,2,3])
     network.update_sync([1,2,3])
     print('done')
