@@ -1,7 +1,6 @@
 from Utils import FileHelper as fh
 from Utils import ImageHelper as ih
 from NeuralNetwork import HopfieldNetwork
-import numpy as np
 import tkinter as tk
 from tkinter import filedialog
 root = tk.Tk()
@@ -14,6 +13,7 @@ buttons = list()
 is_sync = True
 train_method = 0 #Hebb
 network = None
+training_image_index = None
 #
 
 
@@ -67,9 +67,11 @@ def switch_background(index: int):
     buttons[index]['bg'] = 'white' if buttons[index]['bg'] == 'black' else 'black'
     buttons[index].update()
 
+
 def set_mode_async():
     global is_sync
     is_sync = False
+
 
 def set_mode_sync():
     global is_sync
@@ -90,7 +92,7 @@ def get_list_from_buttons():
     global buttons
     ret = list()
     for button in buttons:
-        ret.append(1 if button['bg'] == 'white' else None)
+        ret.append(1 if button['bg'] == 'white' else -1)
     return ret
 
 
@@ -112,8 +114,8 @@ def init_network():
         if train_method == 0: #Hebb
             network.train_hebb(training_set=training_data)
         else:
-            network.train_oji(training_set=training_data, epochs=5)
-        set_buttons_from_list(network.output())
+            network.train_oji(training_set=training_data)
+
 
 
 def test_network():
@@ -129,7 +131,19 @@ def test_network_on_training_set():
     global is_sync
     if network is not None:
         network.test_training_set(is_sync)
-        
+
+
+def load_next(event=None):
+    global network
+    global training_image_index
+    if network is not None:
+        if training_image_index is not None:
+            training_image_index += 1
+            training_image_index %= network.n
+        else:
+            training_image_index = 0
+        set_buttons_from_list(network.patterns[training_image_index])
+
 
 if __name__ == '__main__':
     __menu = tk.Menu(root)
@@ -151,8 +165,10 @@ if __name__ == '__main__':
     __menu.add_cascade(label="Test", menu=__test_menu)
     __test_menu.add_command(label='Test network on current map', command=test_network)
     __test_menu.add_command(label='Test network on training set', command=test_network_on_training_set)
+    __test_menu.add_command(label='Load next image from training set', command=load_next)
 
     __menu.add_cascade(label='Testing mode', menu=__test_mode_menu)
     __test_mode_menu.add_command(label='Synchronous (default)', command=set_mode_sync)
     __test_mode_menu.add_command(label='Asynchronous', command=set_mode_async)
+    root.bind("<space>", load_next)
     root.mainloop()

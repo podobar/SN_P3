@@ -74,3 +74,12 @@ class ImageHelper:
         else:
             plt.savefig(f'Results/p{pattern_id}_{time.strftime("%m%d-%H%M")}_energy.png')
         plt.close()
+
+    @staticmethod
+    def save_weights(matrix):
+        w_mat = plt.imshow(matrix, cmap='coolwarm')
+        plt.colorbar(w_mat)
+        plt.title("Wagi połączeń w sieci")
+        plt.tight_layout()
+        plt.savefig("Results/weights.png")
+        plt.close()
