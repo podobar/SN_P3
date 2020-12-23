@@ -16,13 +16,6 @@ class HopfieldNetwork:
 
         self.w = np.zeros((n, n))  # weights, initially 0.0 <-> 0.0
         self.patterns = list()
-        return
-
-    def output(self):
-        ret = np.zeros(self.n)
-        for i in range(self.n):
-            ret[i] = 1 if np.sum(self.w[i,:]) >= 0 else -1
-        return ret
 
     def energy(self, x: list):
         ret_energy = 0.0
