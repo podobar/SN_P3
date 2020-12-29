@@ -18,11 +18,7 @@ class HopfieldNetwork:
         self.patterns = list()
 
     def energy(self, x: list):
-        ret_energy = 0.0
-        for i in range(self.n):
-            for j in range(self.n):
-                ret_energy += -0.5 * self.w[i,j] * x[i] * x[j]
-        return ret_energy
+        return -0.5 * np.dot(x, np.dot(self.w, x))
 
     def train_hebb(self, training_set):
         self.patterns = training_set
@@ -31,23 +27,21 @@ class HopfieldNetwork:
 
         self.w = self.w * 1/self.n
         ImageHelper.save_weights(self.w)
-        return
 
-    def train_oji(self, training_set, learning_rate: float = 0.001, epochs: int = 500):
+    def train_oji(self, training_set, learning_rate: float = 10e-7, epochs: int = 100, epsilon: float = 10e-15):
         self.train_hebb(training_set)
         for epoch in range(epochs):
             w_old = self.w.copy()
             for x in training_set:
+                y = np.dot(self.w, x)
                 for i in range(self.n):
-                    V = np.sign(np.dot(self.w, x)[i])
                     for j in range(self.n):
-                        self.w[i, j] += learning_rate * V * (x[i] - V * self.w[i, j])
+                        self.w[i, j] += learning_rate * y[i] * (x[i] - y[i] * self.w[i, j])
 
-            if np.linalg.norm(w_old - self.w) < 10e-15:
+            if np.linalg.norm(self.w-w_old) < epsilon:
                 break
         self.w -= np.diag(self.w)
         ImageHelper.save_weights(self.w)
-        return
 
     def test_training_set(self, is_sync: bool=True):
         for pattern in self.patterns:
@@ -58,12 +52,12 @@ class HopfieldNetwork:
 
     def __test_sync(self, x: list, is_training_pattern: bool = False):
         pattern_id = self.patterns.index(x) if is_training_pattern else None
-        i=0
+        i = 0
         energy_log = list()
         energy_log.append(self.energy(x))
         ImageHelper.save_image(data=FileHelper.reshape(data=x, shape=self.shape), index=i, pattern_id=pattern_id)
         while True:
-            i+=1
+            i += 1
             x = Functions.step(list(np.dot(self.w, x)))
             energy_log.append(self.energy(x))
             ImageHelper.save_image(data=FileHelper.reshape(data=x, shape=self.shape), index=i, pattern_id=pattern_id)
@@ -80,7 +74,7 @@ class HopfieldNetwork:
 
     def __test_async(self, x: list, is_training_pattern: bool = False):
         pattern_id = self.patterns.index(x) if is_training_pattern else None
-        i=0
+        i = 0
         energy_log = list()
         energy_log.append(self.energy(x))
         ImageHelper.save_image(data=FileHelper.reshape(data=x, shape=self.shape), index=i, pattern_id=pattern_id)
@@ -93,7 +87,7 @@ class HopfieldNetwork:
             energy_log.append(self.energy(x))
             ImageHelper.save_image(data=FileHelper.reshape(data=x, shape=self.shape), index=i, pattern_id=pattern_id)
             if energy_log[i] == energy_log[i - 1]:
-                # Network reached stable state or is looped
+                # Network reached stable state
                 if x in self.patterns:
                     found_index = self.patterns.index(x)
                     test_result = f"Rozpoznano ({found_index}). "

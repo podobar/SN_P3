@@ -54,6 +54,7 @@ class ImageHelper:
 
     @staticmethod
     def save_image(data, index, pattern_id = None):
+        #plt.ioff()
         plt.imshow(data, cmap='gray', vmin=-1, vmax=1)
         plt.xticks([])
         plt.yticks([])
@@ -65,6 +66,7 @@ class ImageHelper:
 
     @staticmethod
     def save_energy_plot(data: list, result: str, pattern_id = None):
+        #plt.ioff()
         plt.plot(data)
         plt.title(result + ' Energia w zależności od iteracji (i)')
         plt.ylabel('Energia')
@@ -77,6 +79,7 @@ class ImageHelper:
 
     @staticmethod
     def save_weights(matrix):
+        #plt.ioff()
         w_mat = plt.imshow(matrix, cmap='coolwarm')
         plt.colorbar(w_mat)
         plt.title("Wagi połączeń w sieci")

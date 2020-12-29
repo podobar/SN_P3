@@ -25,10 +25,6 @@ def load_training_set():
 
         img_size = fh.get_size_from_name(train_file_path)
         raw_data = fh.load(train_file_path)
-        #IF you want to see what you're training the network on, then toggle breakpoint on for below and use debug mode. Uncomment the code first of course.
-        # for arr in raw_data:
-        #     img = fh.reshape(data=arr, shape=img_size)
-        #     ih.draw_image(img)
         training_data = raw_data
         clear_buttons()
 
@@ -57,7 +53,7 @@ def clear_buttons():
                            width=2,
                            height=1,
                            bg='black',
-                           command=lambda _index=i * img_size[1] + j: switch_background(index=_index)
+                           command=lambda _index=i * img_size[0] + j: switch_background(index=_index)
                            )
                 b.grid(row=i, column=j)
                 buttons.append(b)
@@ -115,7 +111,7 @@ def init_network():
             network.train_hebb(training_set=training_data)
         else:
             network.train_oji(training_set=training_data)
-
+    clear_buttons()
 
 
 def test_network():
@@ -139,7 +135,7 @@ def load_next(event=None):
     if network is not None:
         if training_image_index is not None:
             training_image_index += 1
-            training_image_index %= network.n
+            training_image_index = training_image_index % len(network.patterns)
         else:
             training_image_index = 0
         set_buttons_from_list(network.patterns[training_image_index])
