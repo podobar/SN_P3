@@ -36,7 +36,7 @@ class HopfieldNetwork:
                 y = np.dot(self.w, x)
                 for i in range(self.n):
                     for j in range(self.n):
-                        self.w[i, j] += learning_rate * y[i] * (x[i] - y[i] * self.w[i, j])
+                        self.w[i, j] += learning_rate * y[i] * (x[j] - y[i] * self.w[i, j])
 
             if np.linalg.norm(self.w-w_old) < epsilon:
                 break
