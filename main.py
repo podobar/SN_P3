@@ -53,7 +53,7 @@ def clear_buttons():
                            width=2,
                            height=1,
                            bg='black',
-                           command=lambda _index=i * img_size[0] + j: switch_background(index=_index)
+                           command=lambda _index=i * img_size[1] + j: switch_background(index=_index)
                            )
                 b.grid(row=i, column=j)
                 buttons.append(b)

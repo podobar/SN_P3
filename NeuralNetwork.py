@@ -27,8 +27,9 @@ class HopfieldNetwork:
 
         self.w = self.w * 1/self.n
         ImageHelper.save_weights(self.w)
+        return
 
-    def train_oji(self, training_set, learning_rate: float = 10e-7, epochs: int = 100, epsilon: float = 10e-15):
+    def train_oji(self, training_set, learning_rate: float = 10e-5, epochs: int = 100, epsilon: float = 10e-15):
         self.train_hebb(training_set)
         for epoch in range(epochs):
             w_old = self.w.copy()
@@ -42,13 +43,14 @@ class HopfieldNetwork:
                 break
         self.w -= np.diag(self.w)
         ImageHelper.save_weights(self.w)
+        return
 
     def test_training_set(self, is_sync: bool=True):
         for pattern in self.patterns:
             self.test(pattern, is_sync, is_training_pattern=True)
 
     def test(self, x:list, is_sync: bool = True, is_training_pattern: bool = False):
-        return self.__test_sync(x, is_training_pattern) if is_sync is True else self.__test_async(x, is_training_pattern)
+        return self.__test_sync(x.copy(), is_training_pattern) if is_sync is True else self.__test_async(x.copy(), is_training_pattern)
 
     def __test_sync(self, x: list, is_training_pattern: bool = False):
         pattern_id = self.patterns.index(x) if is_training_pattern else None
